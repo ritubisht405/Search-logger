@@ -1,0 +1,17 @@
+table {
+    width: 100%;
+    border : 1px solid grey;
+  }
+  
+  th {
+    padding: 10px;
+    border-bottom: 1px solid grey;
+  }
+
+
+  
+  td {
+    text-align: center;
+    padding :10px;
+    border:1px solid grey;
+  }

@@ -1,0 +1,50 @@
+.search-button {
+    width: 8rem;
+    height: 2rem;
+    padding:2px;
+    background-color :#5d42f5;
+    color:#fff;
+    font-weight: 600;
+    margin-top:60px;
+    margin-left:20px;
+    border-radius: 5px;
+}
+
+.table-row {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+  }
+
+.table-column{
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+    
+}
+
+
+table {
+  width: 100%;
+}
+
+th {
+  padding-left: 50px;
+  border-bottom: 1px solid grey;
+}
+
+td {
+  text-align: center;
+}
+
+input{
+  height:1.5rem;
+}
+
+select{
+  height:1.9rem;
+}
+
+h4 {
+  text-align: center;
+}

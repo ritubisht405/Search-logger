@@ -35,6 +35,8 @@ describe("Employee Data", () => {
          expect(searchLoggerButton).toBeInTheDocument();
 
     });
+
+    
     test('Should all input render correctely',()=>{
        const {container}= render(
             <BrowserRouter>

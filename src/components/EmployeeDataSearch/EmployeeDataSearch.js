@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
-import queryString from "query-string";
 import { useSearchParams, useLocation } from "react-router-dom";
 import './EmployeeDataSearch.css';
 
 function EmployeeDataSearch({ data, filterData }) {
   const location = useLocation();
   const [selectedData, setSelectedData] = useState({});
-  const [, setSearchParams] = useSearchParams();
+  const [searchParams,setSearchParams] = useSearchParams();
 
 
   useEffect(() => {
-    const queryParams = queryString?.parse(window?.location?.search);
+    const queryParams = Object.fromEntries([...searchParams]);
     setSelectedData({ ...queryParams });
     handleFilter();
     // eslint-disable-next-line 
@@ -55,7 +54,7 @@ function EmployeeDataSearch({ data, filterData }) {
 
   let handleFilter = () => {
     let newData = [...data];
-    const queryParams = queryString?.parse(window?.location?.search);
+    const queryParams = Object.fromEntries([...searchParams]);;
 
     const selectedValue = queryParams;
 

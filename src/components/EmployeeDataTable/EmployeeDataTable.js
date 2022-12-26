@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState} from "react";
 import EmployeeDataSearch from "../EmployeeDataSearch/EmployeeDataSearch";
 import Pagination from "../Pagination/Pagination";
 import "./EmployeeDataTable.css";
@@ -9,26 +9,20 @@ function EmployeeDataTable() {
   const [dataCopy, setDataCopy] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage] = useState(10);
-  const [totalRecord, setTotalRecord] = useState(0);
+  const [, setTotalRecord] = useState(0);
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-
   const currentRecords = data.slice(indexOfFirstRecord, indexOfLastRecord);
-  const [sort, setSort] = useState(0);
-  const [appSort, setAppSort] = useState(0);
-  const [appIdSort, setAppIdSort] = useState(0);
-  const [dateSort, setDateSort] = useState(0);
-  const [actionTypeSort, setActionTypeSort] = useState(0);
 
+  let [sortToggle, setSortToggle] = useState({
+    isLogId: true,
+    isApplicationType: true,
+    isApplicationId: true,
+    isActionType: true,
+    isDateAndTime: true,
+  });
 
-  const onPageChanged = useCallback(
-    (event, page) => {
-      event.preventDefault();
-      setCurrentPage(page);
-    },
-    [setCurrentPage]
-  );
-
+  const nPages = Math.ceil(data.length / recordsPerPage);
 
   useEffect(() => {
     fetch("https://run.mocky.io/v3/a2fbc23e-069e-4ba5-954c-cd910986f40f").then(
@@ -36,42 +30,42 @@ function EmployeeDataTable() {
         result
           .json()
           .then((response) => {
-            setData(response.result.auditLog);
-            setDataCopy(response.result.auditLog);
-            setTotalRecord(response.result.auditLog.length)
+            setData(response?.result?.auditLog);
+            setDataCopy(response?.result?.auditLog);
+            setTotalRecord(response?.result?.auditLog?.length)
           })
           .catch(() => "something went wrong");
       }
     );
   }, []);
 
-  // LogId Sorting 
 
-  const LogIdSorting = (sort) => {
+
+  const LogIdSorting = () => {
+    let isSort = sortToggle.isLogId;
     let newData = [...data];
     let sorting = (a, b) => {
-      if (sort) {
+      if (isSort) {
         return a.logId - b.logId
       } else {
         return b.logId - a.logId
       }
     }
     let sortedData = newData.sort(sorting);
-    console.log('sortedData==>', sortedData)
     setData(sortedData);
+    setSortToggle({
+      ...sortToggle,
+      isLogId: !sortToggle.isLogId,
+    });
   };
 
 
-  useEffect(() => {
-    LogIdSorting(sort)
-  }, [sort])
 
-  //Application Id Sorting
-
-  const ApplicationIdSorting = (sort) => {
+  const ApplicationIdSorting = () => {
+    let isSort = sortToggle.isApplicationId;
     let newData = [...data];
     let sorting = (a, b) => {
-      if (sort) {
+      if (isSort) {
         return a.applicationId - b.applicationId
       } else {
         return b.applicationId - a.applicationId
@@ -79,43 +73,19 @@ function EmployeeDataTable() {
     }
     let sortedData = newData.sort(sorting);
     setData(sortedData);
+    setSortToggle({
+      ...sortToggle,
+      isApplicationId: !sortToggle.isApplicationId,
+    });
   };
 
 
-  useEffect(()=>{
-    ApplicationIdSorting(appIdSort)
-  },[appIdSort])
 
-
-
-  //ApplicationType Sorting
-
-
-  const ApplicationTypeSorting = (sort) => {
+  const ApplicationTypeSorting = () => {
+    let isSort = sortToggle.isApplicationType;
     let newData = [...data];
     let sorting = (a, b) => {
-      if (sort) {
-        return a.actionType?.localeCompare(b.actionType)
-      } else {
-        return b.actionType?.localeCompare(a.actionType)
-      }
-    }
-    let sortedData = newData.sort(sorting);
-    setData(sortedData);
-  };
-
-
-  useEffect(()=>{
-    ApplicationTypeSorting(actionTypeSort)
-  },[actionTypeSort])
-
-
-  //ActionType Sorting
-
-  const ActionTypeSorting = () => {
-   let newData = [...data];
-    let sorting = (a, b) => {
-      if (sort) {
+      if (isSort) {
         return a.applicationType?.localeCompare(b.applicationType)
       } else {
         return b.applicationType?.localeCompare(a.applicationType)
@@ -123,19 +93,37 @@ function EmployeeDataTable() {
     }
     let sortedData = newData.sort(sorting);
     setData(sortedData);
+    setSortToggle({
+      ...sortToggle,
+      isApplicationType: !sortToggle.isApplicationType,
+    });
   };
 
 
-  useEffect(()=>{
-    ApplicationTypeSorting(appSort)
-  },[appSort])
+  const ActionTypeSorting = () => {
+    let isSort = sortToggle.isApplicationType;
+   let newData = [...data];
+    let sorting = (a, b) => {
+      if (isSort) {
+        return a.actionType?.localeCompare(b.actionType)
+      } else {
+        return b.actionType?.localeCompare(a.actionType)
+      }
+    }
+    let sortedData = newData.sort(sorting);
+    setData(sortedData);
+    setSortToggle({
+      ...sortToggle,
+      isActionType: !sortToggle.isActionType,
+    });
+  };
 
-  //Date and Time Sorting
 
-  const DateAndTimeSorting = (sort) => {
+  const DateAndTimeSorting = () => {
+    let isSort = sortToggle.isDateAndTime;
     let newData = [...data];
     let sorting = (a, b) => {
-      if (sort) {
+      if (isSort) {
         return a.creationTimestamp?.localeCompare(b.creationTimestamp)
       } else {
         return b.creationTimestamp?.localeCompare(a.creationTimestamp)
@@ -143,15 +131,13 @@ function EmployeeDataTable() {
     }
     let sortedData = newData.sort(sorting);
     setData(sortedData);
+    setSortToggle({
+      ...sortToggle,
+      isDateAndTime: !sortToggle.isDateAndTime,
+    });
 
   }
 
-  useEffect(()=>{
-    DateAndTimeSorting(dateSort)
-  },[dateSort])
-
-
-  // after click on button for filter pagination move to page 1
 
   const filterData = (newData) => {
     setData(newData);
@@ -164,66 +150,66 @@ function EmployeeDataTable() {
       <table>
         <thead>
           <tr>
-            <th onClick={() => setSort(prevSort => !prevSort)}>Log ID 
+            <th onClick={LogIdSorting}>Log ID 
               <i style={{
               border: 'solid black',
               borderWidth: '0 3px 3px 0',
               display: 'inline-block',
               padding: '3px',
               marginLeft:'10px',
-              transform: `rotate(${sort ? '-135deg' : '45deg'})`
+              transform: `rotate(${sortToggle.isLogId ? '-135deg' : '45deg'})`
             }}></i></th>
 
 
-            <th onClick={()=>setAppSort(prevAppSort=>!prevAppSort)}>Application Type 
+            <th onClick={ApplicationTypeSorting}>Application Type 
               <i style={{
               border: 'solid black',
               borderWidth: '0 3px 3px 0',
               display: 'inline-block',
               padding: '3px',
               marginLeft:'10px',
-              transform: `rotate(${appSort ? '-135deg' : '45deg'})`
+              transform: `rotate(${sortToggle.isApplicationType  ? '-135deg' : '45deg'})`
             }}></i> </th>
 
 
-            <th onClick={()=>setAppIdSort(prevAppIdSort=>!prevAppIdSort)}>Application ID 
+            <th onClick={ApplicationIdSorting}>Application ID 
               <i style={{
               border: 'solid black',
               borderWidth: '0 3px 3px 0',
               display: 'inline-block',
               padding: '3px',
               marginLeft:'10px',
-              transform: `rotate(${appIdSort ? '-135deg' : '45deg'})`
+              transform: `rotate(${sortToggle.isApplicationId ? '-135deg' : '45deg'})`
             }}></i></th>
 
 
-            <th onClick={()=>setActionTypeSort(prevActionTypeSort=>!prevActionTypeSort)}>Action 
+            <th onClick={ActionTypeSorting}>Action 
               <i style={{
               border: 'solid black',
               borderWidth: '0 3px 3px 0',
               display: 'inline-block',
               padding: '3px',
               marginLeft:'10px',
-              transform: `rotate(${actionTypeSort ? '-135deg' : '45deg'})`
+              transform: `rotate(${sortToggle.isActionType ? '-135deg' : '45deg'})`
             }}></i></th>
 
 
             <th>Action Details</th>
-            <th onClick={()=>setDateSort(prevDateSort =>!prevDateSort)}>Date:Time 
+            <th onClick={DateAndTimeSorting}>Date:Time 
               <i style={{
               border: 'solid black',
               borderWidth: '0 3px 3px 0',
               display: 'inline-block',
               padding: '3px',
               marginLeft:'10px',
-              transform: `rotate(${dateSort ? '-135deg' : '45deg'})`
+              transform: `rotate(${sortToggle.isDateAndTime ? '-135deg' : '45deg'})`
             }}></i></th>
           </tr>
         </thead>
 
         <tbody>
-          {data
-            ? currentRecords.map((item, index) => (
+          
+            { currentRecords.map((item, index) => (
               <tr key={index}>
                 <td>{item.logId}</td>
                 <td>{item.applicationType ? item.applicationType : '-'}</td>
@@ -232,17 +218,15 @@ function EmployeeDataTable() {
                 <td>-</td>
                 <td>{item.creationTimestamp}</td>
               </tr>
-            ))
-            : "No Data Matched"}
+            ))}
         </tbody>
       </table>
+      {!data.length && <center><h4>Data not found!</h4></center>}
     
       <Pagination
-        totalRecords={100}
-        pageLimit={10}
-        pageNeighbours={2}
-        onPageChanged={onPageChanged}
+        nPages={nPages}
         currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
       />
 
 

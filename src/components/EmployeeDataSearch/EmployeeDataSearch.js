@@ -1,13 +1,20 @@
-import React, { useState } from "react";
-
-import { useSearchParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import queryString from "query-string";
+import { useSearchParams, useLocation } from "react-router-dom";
 import './EmployeeDataSearch.css';
 
 function EmployeeDataSearch({ data, filterData }) {
-  const [selectedData, setSelectedData] = useState({
-  
-  });
-  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const [selectedData, setSelectedData] = useState({});
+  const [, setSearchParams] = useSearchParams();
+
+
+  useEffect(() => {
+    const queryParams = queryString?.parse(window?.location?.search);
+    setSelectedData({ ...queryParams });
+    handleFilter();
+    // eslint-disable-next-line 
+  }, [location, data]);
 
   let actionTypeOptions = new Set(
     data.map((item) => {
@@ -22,38 +29,74 @@ function EmployeeDataSearch({ data, filterData }) {
   );
 
   const handleSearch = () => {
-    setSearchParams(selectedData);
+    let paramsData = {};
+    if (selectedData.LogId) {
+      paramsData.LogId = selectedData.LogId;
+    }
+    if (selectedData.ActionType) {
+      paramsData.ActionType = selectedData.ActionType;
+    }
+    if (selectedData.ApplicationType) {
+      paramsData.ApplicationType = selectedData.ApplicationType;
+    }
+    if (selectedData.fromDate) {
+      paramsData.fromDate = selectedData.fromDate;
+    }
+    if (selectedData.toDate) {
+      paramsData.toDate = selectedData.toDate;
+    }
+    if (selectedData.ApplicationID) {
+      paramsData.ApplicationID = selectedData.ApplicationID;
+    }
+    setSearchParams(paramsData);
+  };
+
+
+
+  let handleFilter = () => {
     let newData = [...data];
-    let actionArray = selectedData?.ActionType
+    const queryParams = queryString?.parse(window?.location?.search);
+
+    const selectedValue = queryParams;
+
+    let actionArray = selectedValue?.ActionType
       ? newData?.filter((item) =>
-          item?.actionType?.includes(selectedData?.ActionType)
+          item?.actionType?.includes(selectedValue?.ActionType)
         )
       : newData;
-    let applicationArray = selectedData?.ApplicationType
-      ? actionArray?.filter((item) =>
-          item?.applicationType?.includes(selectedData?.ApplicationType)
+    let applicationArray = selectedValue?.ApplicationType
+      ? actionArray?.filter(
+          (item) => item?.applicationType === selectedValue?.ApplicationType
         )
       : actionArray;
-    let dateFromArray = selectedData?.fromDate
+    let dateFromArray = selectedValue?.fromDate
       ? applicationArray?.filter(
-          (item) => item?.creationTimestamp >= selectedData?.fromDate
+          (item) =>
+            item?.creationTimestamp.split(" ")[0] >= selectedValue?.fromDate
         )
       : applicationArray;
 
-    let dateToArray = selectedData?.toDate
+    let dateToArray = selectedValue?.toDate
       ? dateFromArray?.filter(
-          (item) => item?.creationTimestamp <= selectedData?.toDate
+          (item) =>
+            item?.creationTimestamp.split(" ")[0] <= selectedValue?.toDate
         )
       : dateFromArray;
 
-    let applicationIDArray = selectedData?.ApplicationID
+    let applicationIDArray = selectedValue?.ApplicationID
       ? dateToArray?.filter((item) =>
-          item?.applicationId?.toString().includes(selectedData?.ApplicationID)
+          item?.applicationId?.toString().includes(selectedValue?.ApplicationID)
         )
       : dateToArray;
 
-    filterData(applicationIDArray);
+    let LogIdArray = selectedValue?.LogId
+      ? applicationIDArray?.filter((item) =>
+          item?.logId?.toString().includes(selectedValue?.LogId)
+        )
+      : applicationIDArray;
+    filterData(LogIdArray);
   };
+
 
   return (
     <div className="App" data-testid="EmployeeFilterField">
@@ -66,9 +109,11 @@ function EmployeeDataSearch({ data, filterData }) {
             type="text"
             placeholder="e.g.Admin User"
             onChange={(e) =>
-              setSelectedData({ ...selectedData, name: e.target.value })
+              setSelectedData({ ...selectedData, LogId: e.target.value })
             }
             aria-label = 'employeeName'
+            value={selectedData?.LogId ? selectedData?.LogId : ""}
+
           />
         </div>
         <div className="table-column">
@@ -77,6 +122,7 @@ function EmployeeDataSearch({ data, filterData }) {
             onChange={(e) =>
               setSelectedData({ ...selectedData, ActionType: e.target.value })
             }
+            value={selectedData?.ActionType ? selectedData?.ActionType : ""}
             aria-label = 'actionTypeSelect'
           >
             <option   value=''>select</option>
@@ -94,6 +140,8 @@ function EmployeeDataSearch({ data, filterData }) {
                 ApplicationType: e.target.value,
               })
             }
+            value={selectedData?.ApplicationType ? selectedData?.ApplicationType : ""}
+
             aria-label = 'applicationTypeSelect'
           >
            <option   value=''>select</option>
@@ -107,6 +155,8 @@ function EmployeeDataSearch({ data, filterData }) {
              <input type='date'  onChange={(e) =>
               setSelectedData({ ...selectedData, fromDate: e.target.value })
             } 
+            value={selectedData?.fromDate ? selectedData?.fromDate : ""}
+
             aria-label = 'fromDate'
             name="fromDate"
             />
@@ -117,6 +167,8 @@ function EmployeeDataSearch({ data, filterData }) {
               setSelectedData({ ...selectedData, toDate: e.target.value })
             } 
             name="toDate"
+            value={selectedData?.toDate ? selectedData?.toDate : ""}
+
             />
         </div>
         <div className="table-column">
@@ -130,6 +182,8 @@ function EmployeeDataSearch({ data, filterData }) {
                 ApplicationID: e.target.value,
               })
             }
+            value={selectedData?.ApplicationID ? selectedData?.ApplicationID : ""}
+
             aria-label = 'applicationId'
           />
         </div>
@@ -139,20 +193,6 @@ function EmployeeDataSearch({ data, filterData }) {
         >
           Search Logger
         </button>
-
-        {/* <button
-          style={{
-            height: "50px",
-            marginTop: "20px",
-            marginLeft: "10px",
-            background: "blue",
-          }}
-          data-testid="button"
-          type="submit"
-          onClick={handleClick}
-        >
-          Reset
-        </button> */}
       </div>
     </div>
   );

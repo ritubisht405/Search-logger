@@ -1,16 +1,17 @@
-import { logRoles, render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { render, screen  } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import EmployeeDataTable from "../components/EmployeeDataTable/EmployeeDataTable";
 
 
 describe("Employee Data", () => {
+   
     test("Should all labels render properly", () => {
         render(
             <BrowserRouter>
                 <EmployeeDataTable />
             </BrowserRouter>
         );
+        
 
         const getEmployeeLabel = screen.getByRole('heading', {
             name: /Employee name/i

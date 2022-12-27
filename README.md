@@ -63,7 +63,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/a
 
 ### Deployment
 
-Deployed url : https://real-estate-search-logger-wr9j.onrender.com
+Deployed url : https://real-estate-search-logger-pu0c.onrender.com
 
 ### `npm run build` fails to minify
 

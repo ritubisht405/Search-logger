@@ -101,7 +101,7 @@ function EmployeeDataSearch({ data, filterData }) {
     <div className="App" data-testid="EmployeeFilterField">
       <div className="table-row">
         <div className="table-column">
-          <h4>Employee name</h4>
+          <h4>Employee Log Id</h4>
           <input 
             name='Employee name'
             data-testid ='employeeName'

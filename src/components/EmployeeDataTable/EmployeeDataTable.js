@@ -101,7 +101,7 @@ function EmployeeDataTable() {
 
 
   const ActionTypeSorting = () => {
-    let isSort = sortToggle.isApplicationType;
+    let isSort = sortToggle.isActionType;
    let newData = [...data];
     let sorting = (a, b) => {
       if (isSort) {
